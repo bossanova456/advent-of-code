@@ -3,7 +3,7 @@ require('dotenv').config()
 
 const options = {
     hostname: 'adventofcode.com',
-    path: '/2021/day/${day}/input',
+    path: '/2021/day/3/input',
     headers: {
         Cookie: `session=${process.env.session}`
     }
