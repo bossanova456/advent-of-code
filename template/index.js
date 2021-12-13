@@ -12,8 +12,14 @@ const options = {
 const req = https.get(options, res => {
     console.log(`statusCode: ${res.statusCode}`)
 
+    const data = [];
+
     res.on('data', d => {
-        const inputData = d.toString('utf8').split('\n');
+        data.push(d);
+    })
+
+    res.on('end', () => {
+        const inputData = data.join().toString('utf8').split('\n');
     })
 })
 
