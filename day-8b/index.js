@@ -48,11 +48,11 @@ const req = https.get(options, res => {
             "cefabd"
         ];
 
-        // const patterns = inputData.map(value => value.split(' | ')[0]).filter(value => value != '');
-        // const output = inputData.map(value => value.split(' | ')[1]);
+        const patterns = inputData.map(value => value.split(' | ')[0]).filter(value => value != '');
+        const outputArray = inputData.map(value => value.split(' | ')[1]);
         
-        const patterns = testData.map(value => value.split(' | ')[0]).filter(value => value != '');
-        const outputArray = testData.map(value => value.split(' | ')[1]);
+        // const patterns = testData.map(value => value.split(' | ')[0]).filter(value => value != '');
+        // const outputArray = testData.map(value => value.split(' | ')[1]);
 
         console.log("Pattern: " + patterns);
         console.log("Output: " + outputArray);

@@ -41,8 +41,8 @@ const req = https.get(options, res => {
             
             const chosenNumbers = chosenNumbersInput.slice(0, i);
 
-            console.log("====================");
-            console.log("Using chosen numbers: " + chosenNumbersInput.slice(0, i));
+            // console.log("====================");
+            // console.log("Using chosen numbers: " + chosenNumbersInput.slice(0, i));
 
             // chosenNumbersInput.slice(0, i).map(chosenNumber => {
             for (let c=0; c<i && !matchBingoIndex; c++) {
