@@ -1,5 +1,10 @@
-https = require('https')
+const https = require('https')
+const NodeCache = require('persistent-cache');
 require('dotenv').config()
+
+const cache = new NodeCache();
+
+let inputData = [];
 
 const options = {
     hostname: 'adventofcode.com',
@@ -9,43 +14,57 @@ const options = {
     }
 }
 
-const req = https.get(options, res => {
-    console.log(`statusCode: ${res.statusCode}`)
+const processData = (inputData) => {
+    const elfArray = [];
 
-    const data = [];
+    let elfCalorieIndex = 0;
+    inputData.map((calorieValue, i) => {
+        if (calorieValue === '') {
+            elfArray[elfArray.length] = inputData.slice(elfCalorieIndex, i);
+            elfCalorieIndex = i+1;
+        }
+    });
 
-    res.on('data', d => {
-        data.push(d);
-    })
+    let maxCalorieSum = 0;
+    elfArray.map((calorieStringArray, index) => {
+        const calorieSum = calorieStringArray
+            .map(value => parseInt(value))
+            .reduce((previousCalorieValue, currentCalorieValue) => {
+                const sum = previousCalorieValue + currentCalorieValue;
+                return sum;
+            });
+        
+        if (calorieSum > maxCalorieSum) maxCalorieSum = calorieSum;
+    });
 
-    res.on('end', () => {
-        const inputData = data.join().toString('utf8').split('\n');
+    console.log("Max sum: " + maxCalorieSum);
+}
 
-        const elfArray = [];
+inputData = cache.getSync('inputData');
 
-        let elfCalorieIndex = 0;
-        inputData.map((calorieValue, i) => {
-            if (calorieValue === '') {
-                elfArray[elfArray.length] = inputData.slice(elfCalorieIndex, i);
-                elfCalorieIndex = i+1;
-            }
+if (!inputData) {
+    console.log("Did not find input data in cache");
+
+    const req = https.get(options, res => {
+        console.log(`statusCode: ${res.statusCode}`)
+
+        const data = [];
+
+        res.on('data', d => {
+            data.push(d);
         });
 
-        let maxCalorieSum = 0;
-        elfArray.map((calorieStringArray, index) => {
-            const calorieSum = calorieStringArray
-                .map(value => parseInt(value))
-                .reduce((previousCalorieValue, currentCalorieValue) => {
-                    const sum = previousCalorieValue + currentCalorieValue;
-                    return sum;
-                });
-            
-            if (calorieSum > maxCalorieSum) maxCalorieSum = calorieSum;
+        res.on('end', () => {
+            inputData = data.join().toString('utf8').split('\n');
+            cache.put('inputData', inputData, () => {});
+
+            processData(inputData);
         });
+    });
 
-        console.log("Max sum: " + maxCalorieSum);
-
-    })
-})
-
-req.end()
+    req.end();
+}
+else {
+    console.log("Found input data in cache");
+    processData(inputData);
+}

@@ -1,5 +1,10 @@
-https = require('https')
+const https = require('https')
+const NodeCache = require('persistent-cache');
 require('dotenv').config()
+
+const cache = new NodeCache();
+
+let inputData = [];
 
 const options = {
     hostname: 'adventofcode.com',
@@ -9,57 +14,69 @@ const options = {
     }
 }
 
-const req = https.get(options, res => {
-    console.log(`statusCode: ${res.statusCode}`)
+const processData = (inputData) => {
+    const elfArray = [];
 
-    const data = [];
-
-    res.on('data', d => {
-        data.push(d);
-    })
+    let elfCalorieIndex = 0;
+    inputData.map((calorieValue, i) => {
+        if (calorieValue === '') {
+            elfArray[elfArray.length] = inputData.slice(elfCalorieIndex, i);
+            elfCalorieIndex = i+1;
+        }
+    });
 
     let maxElfCalorieArray = new Array(3).fill(0);
 
-    function checkAndUpdateCalorieArray(newCalorieSum) {
-        let hasInsertedValue = false;
-        maxElfCalorieArray.map((calorieValue, index) => {
-            if (newCalorieSum > calorieValue && !hasInsertedValue) {
-                maxElfCalorieArray.splice(index, 0, newCalorieSum);
-                hasInsertedValue = true;
-            }
+    elfArray.map((calorieStringArray, index) => {
+        const calorieSum = calorieStringArray
+            .map(value => parseInt(value))
+            .reduce((previousCalorieValue, currentCalorieValue) => {
+                const sum = previousCalorieValue + currentCalorieValue;
+                return sum;
+            });
+
+        ((newCalorieSum) => {
+            let hasInsertedValue = false;
+            maxElfCalorieArray.map((calorieValue, index) => {
+                if (newCalorieSum > calorieValue && !hasInsertedValue) {
+                    maxElfCalorieArray.splice(index, 0, newCalorieSum);
+                    hasInsertedValue = true;
+                }
+            });
+    
+            maxElfCalorieArray = maxElfCalorieArray.slice(0, 3);
+        })(calorieSum);
+    });
+
+    const maxCalorieSum = maxElfCalorieArray.reduce((prev, cur) => prev + cur);
+    console.log("Max sum: " + maxCalorieSum);
+}
+
+inputData = cache.getSync('inputData');
+
+if (!inputData) {
+    console.log("Did not find input data in cache");
+
+    const req = https.get(options, res => {
+        console.log(`statusCode: ${res.statusCode}`)
+
+        const data = [];
+
+        res.on('data', d => {
+            data.push(d);
         });
 
-        maxElfCalorieArray = maxElfCalorieArray.slice(0, 3);
-    }
+        res.on('end', () => {
+            inputData = data.join().toString('utf8').split('\n');
+            cache.put('inputData', inputData, () => {});
 
-    res.on('end', () => {
-        const inputData = data.join().toString('utf8').split('\n');
-
-        const elfArray = [];
-
-        let elfCalorieIndex = 0;
-        inputData.map((calorieValue, i) => {
-            if (calorieValue === '') {
-                elfArray[elfArray.length] = inputData.slice(elfCalorieIndex, i);
-                elfCalorieIndex = i+1;
-            }
+            processData(inputData);
         });
+    });
 
-        elfArray.map((calorieStringArray, index) => {
-            const calorieSum = calorieStringArray
-                .map(value => parseInt(value))
-                .reduce((previousCalorieValue, currentCalorieValue) => {
-                    const sum = previousCalorieValue + currentCalorieValue;
-                    return sum;
-                });
-            
-            checkAndUpdateCalorieArray(calorieSum);
-        });
-
-        const maxCalorieSum = maxElfCalorieArray.reduce((prev, cur) => prev + cur);
-        console.log("Max sum: " + maxCalorieSum);
-
-    })
-})
-
-req.end()
+    req.end();
+}
+else {
+    console.log("Found input data in cache");
+    processData(inputData);
+}
