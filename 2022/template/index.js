@@ -36,6 +36,8 @@ if (!inputData) {
         res.on('end', () => {
             inputData = data.join().toString('utf8').split('\n');
             cache.put('inputData', inputData, () => {});
+            
+            processData(inputData);
         });
     });
 
@@ -43,6 +45,5 @@ if (!inputData) {
 }
 else {
     console.log("Found input data in cache");
+    processData(inputData);
 }
-
-processData(inputData);
