@@ -40,12 +40,14 @@ const processData = (inputData) => {
             .length;
     
     const stackQueues = Array.from(Array(stackNumbersTotal), () => new Array(0));
+    
+    const stackStrings = new Array(stackNumbersTotal).fill("");
 
     const processInstruction = (instruction) => {
         console.log("Incoming instruction: " + instruction);
         const matches = instructionsRegex.exec(instruction).splice(1);
         for (let i = 0; i < matches[0]; i++) {
-            stackQueues[matches[2]-1].push(stackQueues[matches[1]-1].pop());
+            if (stackQueues[matches[1]-1].length > 0) stackQueues[matches[2]-1].push(stackQueues[matches[1]-1].pop());
             console.log("Destination stack: " + stackQueues[matches[2]-1]);
         }
     }
@@ -88,7 +90,6 @@ const processData = (inputData) => {
 }
 
 inputData = cache.getSync('inputData');
-
 
 if (!inputData) {
     console.log("Did not find input data in cache");
