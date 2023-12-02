@@ -1,0 +1,8 @@
+{
+  "registry": "https://registry.npmjs.org/",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "https": "^1.0.0",
+    "persistent-cache": "^1.1.2"
+  }
+}
