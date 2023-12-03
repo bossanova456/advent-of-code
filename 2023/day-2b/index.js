@@ -23,6 +23,41 @@ const options = {
 }
 
 const processData = (data) => {
+    // const result = data
+    //     .map(row => row.split(': ')[1])
+    //     .map(row  => {
+    //         const colors = {
+    //             "red": 0,
+    //             "green": 0,
+    //             "blue": 0
+    //         };
+
+    //         row.split('; ').map(set => {
+    //             set.split(', ').map(color => {
+    //                 const colorName = color.split(' ')[1];
+    //                 const value = parseInt(color.split(' ')[0]);
+
+    //                 colors[colorName] = Math.max(colors[colorName], value);
+
+    //                 return {c: colorName, value}
+    //             })
+    //             .map(color => console.log("Color: " + JSON.stringify(color)))
+    //             .reduce((a, b) => {
+    //                 const colorName = b[colorName];
+    //                 const colorValue = b[value];
+    //                 console.log("Color name: " + colorName + " | Value: " + colorValue);
+
+    //                 // return a[b[colorName]] ? a[b[colorName]] + a[b[value]] : a[b[value]];
+    //                 return a[colorName] ? a[colorName] + colorValue : colorValue;
+    //             });
+    //         });
+
+    //         return Object.keys(colors).map(key => colors[key]).reduce((a, b) => a * b);
+    //     })
+    //     .reduce((a, b) => a + b);
+
+    // console.log("Result: " + result);
+
     const result = data
         .map(row => row.split(': ')[1])
         .map(row  => {
