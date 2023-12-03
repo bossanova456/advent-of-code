@@ -32,7 +32,7 @@ if (!inputData) {
         });
 
         res.on('end', () => {
-            inputData = data.join().toString('utf8').split('\n');
+            inputData = data.join().toString('utf8').split('\n').filter(row => row.length > 0);
             cache.put('inputData', inputData, () => {});
         });
     });
