@@ -14,7 +14,7 @@ const options = {
     }
 }
 
-const processData = (data) => {
+const processData = (inputData) => {
 }
 
 inputData = cache.getSync('inputData');
@@ -34,8 +34,6 @@ if (!inputData) {
         res.on('end', () => {
             inputData = data.join().toString('utf8').split('\n').filter(row => row.length > 0);
             cache.put('inputData', inputData, () => {});
-
-            processData(inputData);
         });
     });
 
@@ -43,5 +41,6 @@ if (!inputData) {
 }
 else {
     console.log("Found input data in cache");
-    processData(inputData);
 }
+
+processData(inputData);
