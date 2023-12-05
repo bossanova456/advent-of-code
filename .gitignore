@@ -108,3 +108,6 @@ dist
 
 # VSCode files
 .vscode
+
+# Jetbrains files
+*.idea
