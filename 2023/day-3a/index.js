@@ -6,31 +6,6 @@ const cache = new NodeCache();
 
 let inputData = [];
 
-// const testData = [
-//     // "467..114..",
-//     "...*......",
-//     "..35..633.",
-//     "......#...",
-//     // "617*......",
-//     // ".....+.58.",
-//     // "..592.....",
-//     // "......755.",
-//     // "...$.*....",
-//     // ".664.598.."
-// ]
-const testData = [
-    "467..114..",   // 467
-    "...*......",   // 0
-    "..35..633.",   // 668
-    "......#...",   // 0
-    "617*......",   // 617
-    ".....+.58.",   // 0
-    "..592.....",   // 592
-    "......755.",   // 755
-    "...$.*....",   // 0
-    ".664.598.."    // 1262
-]
-
 const options = {
     hostname: 'adventofcode.com',
     path: '/2023/day/3/input',
@@ -41,11 +16,11 @@ const options = {
 
 const processData = (data) => {
     const result = data
-        // .filter(row => row.match(/[0-9]+/g))
         .map((row, r) => {
             console.log("Row: " + row);
+            let rowTemp = row;
 
-            const matches = row.match(/[0-9]+/g);
+            const matches = rowTemp.match(/[0-9]+/g);
 
             console.log("Matches: " + matches);
 
@@ -59,35 +34,36 @@ const processData = (data) => {
                 const matchesTemp = matches.filter((match, m) => {
                     // ... horizontally
                     // In the case of horizontal, no digits will be neighboring, only symbols
-                    const hindex = row.indexOf(match) - 1;
+                    const hindex = rowTemp.indexOf(match) - 1;
                     const vindex = r - 1;
-                    if (hindex >= 0 && row[hindex] !== '.') return true;
-                    if ((hindex + match.length + 1) < row.length && row[hindex + match.length + 1] !== '.') return true;
+                    let matchFound = false;
+                    console.log("Hindex: " + hindex + " | Vindex: " + vindex);
+                    if ((hindex >= 0 && rowTemp[hindex] !== '.') ||
+                        ((hindex + match.length + 1) < rowTemp.length && rowTemp[hindex + match.length + 1] !== '.') ||
                     // ... vertically
                     // Take slice of string in rows above & below using length of match string
-                    console.log("Hindex: " + hindex + " | Vindex: " + vindex);
-                    if (
-                        // Check slice above
-                        vindex >= 0 &&
-                        [...data[vindex].slice(
-                            Math.max(0, hindex),
-                            Math.min(data[vindex].length, row.indexOf(match) + match.length + 1)
-                        )].filter(c => c !== '.').length > 0
-                    ) return true;
-                    if (
-                        // Check slice below
-                        (vindex + 2) < data.length &&
-                        [...data[vindex + 2].slice(
-                            Math.max(0, hindex),
-                            Math.min(data[vindex + 2].length, row.indexOf(match) + match.length + 1)
-                        )].filter(c => c !== '.').length > 0
-                    ) return true;
+                        (
+                            // Check slice above
+                            vindex >= 0 &&
+                            [...data[vindex].slice(
+                                Math.max(0, hindex),
+                                Math.min(data[vindex].length, rowTemp.indexOf(match) + match.length + 1)
+                            )].filter(c => c !== '.' && !"0123456789".includes(c)).length > 0
+                        ) ||
+                        (
+                            // Check slice below
+                            (vindex + 2) < data.length &&
+                            [...data[vindex + 2].slice(
+                                Math.max(0, hindex),
+                                Math.min(data[vindex + 2].length, rowTemp.indexOf(match) + match.length + 1)
+                            )].filter(c => c !== '.' && !"0123456789".includes(c)).length > 0
+                        )
+                    ) matchFound = true;
 
-                    return false;
-                })
+                    rowTemp = rowTemp.replace(match, ".".repeat(match.length));
 
-                console.log("New matches: " + matchesTemp);
-                console.log("==============");
+                    return matchFound;
+                });
 
                 return matchesTemp;
             }
@@ -126,5 +102,4 @@ if (!inputData) {
 else {
     console.log("Found input data in cache");
     processData(inputData);
-    // processData(testData);
 }
