@@ -17,12 +17,9 @@ const options = {
 const processData = (data) => {
     const result = data
         .map((row, r) => {
-            console.log("Row: " + row);
             let rowTemp = row;
 
             const matches = rowTemp.match(/[0-9]+/g);
-
-            console.log("Matches: " + matches);
 
             if (matches !== null) {
                 // Loop through matches and filter any not adjacent to a symbol...
@@ -31,13 +28,12 @@ const processData = (data) => {
                 // ...123   ^
                 // ..11..   |
                 // .....1   v (row)
-                const matchesTemp = matches.filter((match, m) => {
+                const matchesTemp = matches.filter(match => {
                     // ... horizontally
                     // In the case of horizontal, no digits will be neighboring, only symbols
                     const hindex = rowTemp.indexOf(match) - 1;
                     const vindex = r - 1;
                     let matchFound = false;
-                    console.log("Hindex: " + hindex + " | Vindex: " + vindex);
                     if ((hindex >= 0 && rowTemp[hindex] !== '.') ||
                         ((hindex + match.length + 1) < rowTemp.length && rowTemp[hindex + match.length + 1] !== '.') ||
                     // ... vertically
